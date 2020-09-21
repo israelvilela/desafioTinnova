@@ -1,0 +1,45 @@
+<div class="list row">
+  <div class="col-md-8">
+  </div>
+  <div class="col-md-6">
+    <h4>Veículos</h4>
+    <ul class="list-group">
+      <li
+        class="list-group-item"
+        *ngFor="let veiculo of veiculos; let i = index"
+        [class.active]="i == currentIndex"
+        (click)="setCurrentVeiculo(veiculo, i)"
+      >
+      {{veiculo.veiculo}}
+      </li>
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <div *ngIf="currentVeiculo">
+      <h4>Veículo</h4>
+      <div>
+        <label><strong>Veículo:</strong>{{currentVeiculo.veiculo}}</label>
+      </div>
+      <div>
+        <label><strong>Marca:</strong>{{currentVeiculo.marca}}</label>
+      </div>
+      <div>
+        <label><strong>Ano:</strong>{{currentVeiculo.ano}}</label>
+      </div>
+      <div>
+        <label><strong>Descrição:</strong>{{currentVeiculo.descricao}}</label>
+      </div>
+      <div>
+        <label><strong>Status:</strong>{{getStatus()}}</label>
+      </div>
+      <a class="badge badge-warning" routerLink="/veiculos/{{currentVeiculo.id}}">
+        Editar
+      </a>
+    </div>
+
+    <div *ngIf="!currentVeiculo">
+      <br />
+      <p>Por favor, selecione um veículo</p>
+    </div>
+  </div>
+</div>

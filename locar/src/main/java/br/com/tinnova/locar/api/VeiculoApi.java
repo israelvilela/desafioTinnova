@@ -21,7 +21,7 @@ import br.com.tinnova.locar.exception.BusinessException;
 import br.com.tinnova.locar.service.VeiculoService;
 
 @RestController
-@RequestMapping("/veiculos")
+@RequestMapping("/api/veiculos")
 public class VeiculoApi {
 	
 	@Autowired
@@ -47,6 +47,12 @@ public class VeiculoApi {
 		return service.totalVeiculosPorDecada();
 	}
 	
+	@GetMapping(path = "/total-semana")
+	public List<VeiculoDTO> getTotalSemana() {
+		return service.getTotalSemana();
+	}
+	
+	
 	@GetMapping(path = "/{idVeiculo}")
 	public VeiculoDTO getVeiculoBy(@PathVariable("idVeiculo") Integer idVeiculo) {
 		return service.getVeiculoBy(idVeiculo);
@@ -61,9 +67,9 @@ public class VeiculoApi {
 		}
 	}
 	
-	@PutMapping
-	public void atualizar(@RequestBody VeiculoDTO dto) {
-		service.update(dto);
+	@PutMapping(path = "/{id}")
+	public void atualizar(@PathVariable("id") Integer idVeiculo, @RequestBody VeiculoDTO dto) {
+		service.update(idVeiculo, dto);
 	}
 	
 	@DeleteMapping(path = "/{idVeiculo}")

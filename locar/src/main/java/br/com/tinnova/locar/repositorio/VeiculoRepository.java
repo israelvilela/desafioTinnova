@@ -1,5 +1,6 @@
 package br.com.tinnova.locar.repositorio;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,8 +12,6 @@ import br.com.tinnova.locar.model.Veiculo;
 
 public interface VeiculoRepository extends JpaRepository<Veiculo, Integer>{
 
-	Veiculo findVeiculoById(Integer id);
-	
 	@Query("SELECT count(veiculo) FROM Veiculo veiculo WHERE veiculo.vendido = false ")
 	Integer findVeiculosDisponiveis();
 	
@@ -20,5 +19,8 @@ public interface VeiculoRepository extends JpaRepository<Veiculo, Integer>{
 	List<VeiculoFabricante> totalVeiculosPorMarca(); 
 	
 	@Query(value = "select decada, count(*) as totalVeiculos  from (select floor(ano / 10) * 10 as decada from veiculo) t  group by decada ", nativeQuery = true)
-	List<VeiculoDecada> totalVeiculosPorDecada(); 
+	List<VeiculoDecada> totalVeiculosPorDecada();
+
+	@Query("SELECT veiculo from Veiculo veiculo WHERE veiculo.created < :data")
+	List<Veiculo> getTotalSemana(LocalDateTime data); 
 }

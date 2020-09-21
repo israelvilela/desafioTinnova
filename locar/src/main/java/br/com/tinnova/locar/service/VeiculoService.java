@@ -3,6 +3,7 @@ package br.com.tinnova.locar.service;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.util.Strings;
@@ -30,9 +31,9 @@ public class VeiculoService {
 	private static final List<String> FABRICANTES = Arrays.asList("Fiat", "Ford", "Honda", "Volkswagen", "Peugeot");
 
 	public VeiculoDTO getVeiculoBy(Integer id) {
-		Veiculo veiculo = repository.findVeiculoById(id);
+		Optional<Veiculo> veiculo = repository.findById(id);
 		
-		return modelMapper.map(veiculo, VeiculoDTO.class);
+		return modelMapper.map(veiculo.get(), VeiculoDTO.class);
 	}
 	
 	public List<VeiculoDTO> getAllVeiculos() {
@@ -53,6 +54,15 @@ public class VeiculoService {
 		return repository.totalVeiculosPorDecada();
 	}
 	
+	public List<VeiculoDTO> getTotalSemana() {
+		LocalDateTime data = LocalDateTime.now();
+		data = data.minusDays(7);
+		
+		List<Veiculo> veiculos = repository.getTotalSemana(data);
+		
+		return veiculos.stream().map(veiculo -> modelMapper.map(veiculo, VeiculoDTO.class)).collect(Collectors.toList());
+	}
+	
 	public void save(VeiculoDTO dto) throws BusinessException {
 		if (dto != null) {
 			verificarMarca(dto);
@@ -62,8 +72,10 @@ public class VeiculoService {
 		}
 	}
 	
-	public void update(VeiculoDTO dto) {
-		if (dto != null) {
+	public void update(Integer id, VeiculoDTO dto) {
+		Optional<Veiculo> veiculo = Optional.of(repository.findById(id)).orElseThrow(() -> new BusinessException("Veículo não existe!"));
+		
+		if (veiculo.isPresent() && dto != null) {
 			dto.setUpdated(LocalDateTime.now());
 			repository.save(modelMapper.map(dto, Veiculo.class));
 		}
