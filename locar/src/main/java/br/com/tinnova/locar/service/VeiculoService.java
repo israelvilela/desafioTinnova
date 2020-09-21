@@ -69,15 +69,19 @@ public class VeiculoService {
 			dto.setVendido(Boolean.FALSE);
 			dto.setCreated(LocalDateTime.now());
 			repository.save(modelMapper.map(dto, Veiculo.class));
+		} else {
+			throw new BusinessException("Dados incompletos!");
 		}
 	}
 	
 	public void update(Integer id, VeiculoDTO dto) {
-		Optional<Veiculo> veiculo = Optional.of(repository.findById(id)).orElseThrow(() -> new BusinessException("Veículo não existe!"));
+		Optional<Veiculo> veiculo = repository.findById(id);
 		
 		if (veiculo.isPresent() && dto != null) {
 			dto.setUpdated(LocalDateTime.now());
 			repository.save(modelMapper.map(dto, Veiculo.class));
+		} else {
+			throw new BusinessException("Veículo não existe!");
 		}
 
 	}
@@ -88,11 +92,13 @@ public class VeiculoService {
 		}
 	}
 	
-	private void verificarMarca(VeiculoDTO dto) {
+	protected void verificarMarca(VeiculoDTO dto) {
 		if (!Strings.isEmpty(dto.getMarca())) {
-			if (!FABRICANTES.contains(dto.getMarca())) {
+			if (!FABRICANTES.stream().anyMatch(fabricante -> fabricante.equalsIgnoreCase(dto.getMarca()))) {
 				throw new BusinessException("Marca informada não existe.");
 			}
+		} else {
+			throw new BusinessException("Marca não informada.");
 		}
 	}
 }
